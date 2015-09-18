@@ -10,4 +10,7 @@
 
 @interface PrimeNumbersGenerator : NSObject
 
++ (instancetype)sharedInstance;
+- (NSArray *)generatePrimeNumbers:(NSUInteger)limit;
+
 @end

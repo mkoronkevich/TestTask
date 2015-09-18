@@ -10,4 +10,6 @@
 
 @interface UILabel (FontSize)
 
+- (void)adjustFont;
+
 @end
