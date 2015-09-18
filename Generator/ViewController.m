@@ -10,6 +10,10 @@
 #import "UILabel+FontSize.h"
 #import "UITextField+FontSize.h"
 #import "PrimeNumbersGenerator.h"
+#import "DeviceSize.h"
+#import "Generation.h"
+
+#define ACCEPTABLE_CHARECTERS @"0123456789"
 
 @interface ViewController () <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate>
 
@@ -19,6 +23,7 @@
 @property (strong, nonatomic) NSArray *primeNumbersArray;
 @property (nonatomic) NSInteger limit;
 @property (strong, nonatomic) UIActivityIndicatorView *spinner;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topViewConstraint;
 
 @end
 
@@ -47,7 +52,6 @@
                                              selector:@selector(textFieldChanged)
                                                  name:UITextFieldTextDidChangeNotification
                                                object:self.limitTextField];
-    
 }
 
 - (void)hideKeyboard {
@@ -58,22 +62,50 @@
     self.generateButton.enabled = self.limitTextField.text.length != 0 ? YES : NO;
 }
 
--(void) willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
-    if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft) {
-        NSLog(@"Landscape left");
-    } else if (toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-        NSLog(@"Landscape right");
-    } else if (toInterfaceOrientation == UIInterfaceOrientationPortrait) {
-        NSLog(@"Portrait");
-    } else if (toInterfaceOrientation == UIInterfaceOrientationPortraitUpsideDown) {
-        NSLog(@"Upside down");
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration {
+    if ((toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) && IS_IPHONE) {
+        self.topViewConstraint.constant = 32.0;
     }
 }
+
+- (BOOL)decimalCharacters:(NSString *)string {
+    NSCharacterSet *charecterSet = [[NSCharacterSet characterSetWithCharactersInString:ACCEPTABLE_CHARECTERS] invertedSet];
+    NSString *filteredString = [[string componentsSeparatedByCharactersInSet:charecterSet] componentsJoinedByString:@""];
+    
+    return [string isEqualToString:filteredString];
+}
+
+- (BOOL)decimalCharactersLength:(NSString *)string textField:(UITextField *)textField range:(NSRange)range {
+    if(range.length + range.location > textField.text.length) {
+        return NO;
+    }
+    
+    NSUInteger newLength = [textField.text length] + [string length] - range.length;
+    return newLength <= 7;
+}
+
+#pragma mark - Core Data
+
+- (void)insertNewObject:(NSUInteger)limit {
+    Generation *generation = [NSEntityDescription insertNewObjectForEntityForName:@"Generation" inManagedObjectContext:_managedObjectContext];
+    generation.limit = [NSNumber numberWithInteger:limit];
+    generation.date = [NSDate date];
+    
+    NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
+    [fetch setEntity:[NSEntityDescription entityForName:@"Generation" inManagedObjectContext:_managedObjectContext]];
+    
+    NSError *error = nil;
+    
+    if(![_managedObjectContext save:&error]) {
+        NSLog(@"Save Error: %@", [error localizedDescription]);
+    }
+}
+
 
 #pragma mark - Text Field delegate
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    return [textField decimalCharacters:string];
+    return [self decimalCharacters:string] && [self decimalCharactersLength:string textField:textField range:range];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -112,6 +144,8 @@
     self.limitTextField.text = @"";
     [self textFieldChanged];
     
+    //[self insertNewObject:self.limit];
+    
     self.primeNumbersArray = [NSArray new];
     [self.tableView reloadData];
     [self.tableView setContentOffset:CGPointZero animated:NO];
@@ -135,6 +169,12 @@
             [blockSelf.tableView reloadData];
         });
     });
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"HistorySegue"]) {
+        [[segue destinationViewController] setManagedObjectContext:self.managedObjectContext];
+    }
 }
 
 @end

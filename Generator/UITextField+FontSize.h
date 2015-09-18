@@ -11,6 +11,5 @@
 @interface UITextField (FontSize)
 
 - (void)adjustFont;
-- (BOOL)decimalCharacters:(NSString *)string;
 
 @end

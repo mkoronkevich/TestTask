@@ -9,8 +9,6 @@
 #import "UITextField+FontSize.h"
 #import "DeviceSize.h"
 
-#define ACCEPTABLE_CHARECTERS @"0123456789"
-
 @implementation UITextField (FontSize)
 
 - (void)adjustFont {
@@ -28,13 +26,6 @@
     }
     
     self.font = [currentFont fontWithSize:currentFont.pointSize * sizeScale];
-}
-
-- (BOOL)decimalCharacters:(NSString *)string {
-    NSCharacterSet *charecterSet = [[NSCharacterSet characterSetWithCharactersInString:ACCEPTABLE_CHARECTERS] invertedSet];
-    NSString *filteredString = [[string componentsSeparatedByCharactersInSet:charecterSet] componentsJoinedByString:@""];
-    
-    return [string isEqualToString:filteredString];
 }
 
 @end

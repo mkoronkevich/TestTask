@@ -17,6 +17,8 @@
 		F135D4621BA9EEA2000AF401 /* GeneratorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F135D4611BA9EEA2000AF401 /* GeneratorTests.m */; };
 		F135D4711BAA2796000AF401 /* UILabel+FontSize.m in Sources */ = {isa = PBXBuildFile; fileRef = F135D4701BAA2796000AF401 /* UILabel+FontSize.m */; };
 		F135D4751BAA3218000AF401 /* UITextField+FontSize.m in Sources */ = {isa = PBXBuildFile; fileRef = F135D4741BAA3218000AF401 /* UITextField+FontSize.m */; };
+		F156581A1BABFF6E000A0449 /* Generation.m in Sources */ = {isa = PBXBuildFile; fileRef = F15658191BABFF6E000A0449 /* Generation.m */; };
+		F15658561BAC1167000A0449 /* HistoryTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F15658551BAC1167000A0449 /* HistoryTableViewController.m */; };
 		F17D14101BAA55620038EF83 /* PrimeNumbersGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = F17D140F1BAA55620038EF83 /* PrimeNumbersGenerator.m */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +52,10 @@
 		F135D4731BAA3218000AF401 /* UITextField+FontSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextField+FontSize.h"; sourceTree = "<group>"; };
 		F135D4741BAA3218000AF401 /* UITextField+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextField+FontSize.m"; sourceTree = "<group>"; };
 		F135D4761BAA3267000AF401 /* DeviceSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSize.h; sourceTree = "<group>"; };
+		F15658181BABFF6E000A0449 /* Generation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Generation.h; sourceTree = "<group>"; };
+		F15658191BABFF6E000A0449 /* Generation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Generation.m; sourceTree = "<group>"; };
+		F15658541BAC1167000A0449 /* HistoryTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryTableViewController.h; sourceTree = "<group>"; };
+		F15658551BAC1167000A0449 /* HistoryTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryTableViewController.m; sourceTree = "<group>"; };
 		F17D140E1BAA55620038EF83 /* PrimeNumbersGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrimeNumbersGenerator.h; sourceTree = "<group>"; };
 		F17D140F1BAA55620038EF83 /* PrimeNumbersGenerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrimeNumbersGenerator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -98,9 +104,12 @@
 				F135D44C1BA9EEA2000AF401 /* ViewController.h */,
 				F135D44D1BA9EEA2000AF401 /* ViewController.m */,
 				F135D44F1BA9EEA2000AF401 /* Main.storyboard */,
+				F15658541BAC1167000A0449 /* HistoryTableViewController.h */,
+				F15658551BAC1167000A0449 /* HistoryTableViewController.m */,
 				F135D4521BA9EEA2000AF401 /* Images.xcassets */,
 				F135D4541BA9EEA2000AF401 /* LaunchScreen.xib */,
 				F135D4491BA9EEA2000AF401 /* Generator.xcdatamodeld */,
+				F156581B1BABFF7D000A0449 /* Models */,
 				F135D4721BAA3158000AF401 /* Categories */,
 				F135D4421BA9EEA2000AF401 /* Supporting Files */,
 				F17D140E1BAA55620038EF83 /* PrimeNumbersGenerator.h */,
@@ -145,6 +154,15 @@
 				F135D4741BAA3218000AF401 /* UITextField+FontSize.m */,
 			);
 			name = Categories;
+			sourceTree = "<group>";
+		};
+		F156581B1BABFF7D000A0449 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F15658181BABFF6E000A0449 /* Generation.h */,
+				F15658191BABFF6E000A0449 /* Generation.m */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -247,9 +265,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F15658561BAC1167000A0449 /* HistoryTableViewController.m in Sources */,
 				F135D44B1BA9EEA2000AF401 /* Generator.xcdatamodeld in Sources */,
 				F17D14101BAA55620038EF83 /* PrimeNumbersGenerator.m in Sources */,
 				F135D4751BAA3218000AF401 /* UITextField+FontSize.m in Sources */,
+				F156581A1BABFF6E000A0449 /* Generation.m in Sources */,
 				F135D4711BAA2796000AF401 /* UILabel+FontSize.m in Sources */,
 				F135D4481BA9EEA2000AF401 /* AppDelegate.m in Sources */,
 				F135D44E1BA9EEA2000AF401 /* ViewController.m in Sources */,
