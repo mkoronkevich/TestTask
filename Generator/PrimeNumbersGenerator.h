@@ -11,6 +11,7 @@
 @interface PrimeNumbersGenerator : NSObject
 
 + (instancetype)sharedInstance;
-- (NSArray *)generatePrimeNumbers:(NSUInteger)limit;
+- (NSArray *)generatePrimeNumbers:(NSInteger)limit;
+- (NSArray *)generatePrimeNumbersForHistory:(NSInteger)userLimit;
 
 @end

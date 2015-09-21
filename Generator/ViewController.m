@@ -38,9 +38,7 @@
     [self.generateButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
     self.limitTextField.font = [UIFont systemFontOfSize:14.0];
     [self.limitTextField adjustFont];
-    
-    [self.tableView registerClass:[UITableViewCell class]
-           forCellReuseIdentifier:@"UITableViewCell"];
+
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     UITapGestureRecognizer *gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
@@ -80,29 +78,33 @@
         return NO;
     }
     
-    NSUInteger newLength = [textField.text length] + [string length] - range.length;
-    return newLength <= 7;
+    NSInteger newLength = [textField.text length] + [string length] - range.length;
+    return newLength < 7;
 }
 
 #pragma mark - Core Data
 
-- (void)insertNewObject:(NSUInteger)limit {
+- (void)insertNewObject:(NSInteger)limit {
     Generation *generation = [NSEntityDescription insertNewObjectForEntityForName:@"Generation" inManagedObjectContext:_managedObjectContext];
     generation.limit = [NSNumber numberWithInteger:limit];
     generation.date = [NSDate date];
     
-    NSFetchRequest *fetch = [[NSFetchRequest alloc] init];
-    [fetch setEntity:[NSEntityDescription entityForName:@"Generation" inManagedObjectContext:_managedObjectContext]];
-    
-    NSError *error = nil;
-    
-    if(![_managedObjectContext save:&error]) {
-        NSLog(@"Save Error: %@", [error localizedDescription]);
-    }
+    [_managedObjectContext performBlock:^{
+        NSError *error = nil;
+        if(![_managedObjectContext save:&error]) {
+            NSLog(@"Save Error: %@", [error localizedDescription]);
+        }
+        [_writerManagedObjectContext performBlock:^{
+            NSError * error;
+            if(![_writerManagedObjectContext save:&error]){
+                NSLog(@"Save Error: %@", [error localizedDescription]);
+            }
+        }];
+    }];
+
 }
 
-
-#pragma mark - Text Field delegate
+#pragma mark - Text Field
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     return [self decimalCharacters:string] && [self decimalCharactersLength:string textField:textField range:range];
@@ -110,11 +112,12 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [self.limitTextField resignFirstResponder];
+    [self startGeneration];
     
     return YES;
 }
 
-#pragma mark - Table view delegate and data source
+#pragma mark - Table View
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [self.primeNumbersArray count];
@@ -125,8 +128,12 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"UITableViewCell"
-                                                            forIndexPath:indexPath];
+    static NSString *CellIdentifier = @"TableViewCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.textLabel.text = [self.primeNumbersArray[indexPath.row] stringValue];
     cell.textLabel.textAlignment = NSTextAlignmentCenter;
@@ -140,11 +147,15 @@
 #pragma mark - IBAction
 
 - (IBAction)generateAction:(id)sender {
+    [self startGeneration];
+}
+
+- (void)startGeneration {
     self.limit = [self.limitTextField.text integerValue];
     self.limitTextField.text = @"";
     [self textFieldChanged];
     
-    //[self insertNewObject:self.limit];
+    [self insertNewObject:self.limit];
     
     self.primeNumbersArray = [NSArray new];
     [self.tableView reloadData];
@@ -170,6 +181,8 @@
         });
     });
 }
+
+#pragma mark - Segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"HistorySegue"]) {

@@ -10,10 +10,12 @@
 
 NSString *const Limit = @"limit";
 NSString *const Primes = @"primes";
+NSInteger const Block = 100;
 
 @interface PrimeNumbersGenerator ()
 
 @property (strong, nonatomic) NSCache *cache;
+@property (strong, nonatomic) NSCache *historyCache;
 
 @end
 
@@ -25,59 +27,41 @@ NSString *const Primes = @"primes";
     dispatch_once(&onceToken, ^{
         sharedInstance = [[PrimeNumbersGenerator alloc] init];
         sharedInstance.cache = [[NSCache alloc] init];
+        sharedInstance.historyCache = [[NSCache alloc] init];
     });
     return sharedInstance;
 }
 
-- (NSArray *)generatePrimeNumbers:(NSUInteger)userLimit {
+- (NSArray *)generatePrimeNumbers:(NSInteger)userLimit {
+    return [self generatePrimeNumbers:userLimit cache:self.cache];
+}
+
+- (NSArray *)generatePrimeNumbersForHistory:(NSInteger)userLimit {
+    return [self generatePrimeNumbers:userLimit cache:self.historyCache];
+}
+
+- (NSArray *)generatePrimeNumbers:(NSInteger)userLimit cache:(NSCache *)cache {
     NSArray *finalPrimesArray = [NSArray array];
-    NSNumber *cacheLimit = [self.cache objectForKey:Limit] ? [self.cache objectForKey:Limit] : [NSNumber numberWithInt:0];
-    NSArray *primesCacheArray = [self.cache objectForKey:Primes];
+    NSNumber *cacheLimit = [cache objectForKey:Limit] ? [cache objectForKey:Limit] : [NSNumber numberWithInt:0];
+    NSArray *primesCacheArray = [cache objectForKey:Primes];
     
-    if(cacheLimit &&
-       primesCacheArray && [primesCacheArray count] > 0 &&
-       userLimit > [cacheLimit integerValue]) {
-        
-        finalPrimesArray = [self generatePrimesWithUserLimit:userLimit
-                                                  cacheLimit:[cacheLimit integerValue]
-                                            primesCacheArray:primesCacheArray];
-        [self.cache setObject:finalPrimesArray forKey:Primes];
-        [self.cache setObject:[NSNumber numberWithInteger:userLimit] forKey:Limit cost:100];
-    } else if(cacheLimit &&
-              primesCacheArray && [primesCacheArray count] > 0 &&
-              userLimit <= [cacheLimit integerValue]) {
+    if(userLimit <= [cacheLimit integerValue]) {
         
         finalPrimesArray = [self generatePrimesWithUserLimit:userLimit
                                             primesCacheArray:primesCacheArray];
     } else {
-        
-        finalPrimesArray = [self generatePrimesWithEmptyCache:userLimit];
-        [self.cache setObject:finalPrimesArray forKey:Primes];
-        [self.cache setObject:[NSNumber numberWithInteger:userLimit] forKey:Limit cost:100];
+        finalPrimesArray = [self generatePrimesWithCache:[cacheLimit integerValue]
+                                        primesCacheArray:primesCacheArray
+                                                   block:Block
+                                               userLimit:userLimit];
+        [cache setObject:finalPrimesArray forKey:Primes];
+        [cache setObject:[NSNumber numberWithInteger:userLimit] forKey:Limit];
     }
     
     return finalPrimesArray;
 }
 
-- (NSArray *)generatePrimesWithEmptyCache:(NSUInteger)userLimit {
-    NSMutableArray *finalPrimesArray = [NSMutableArray array];
-    NSMutableArray *array = [NSMutableArray array];
-    for(int i = 0; i < userLimit; i++) {
-        array[i] = [NSNull null];
-    }
-    
-    for(int i = 2; i < userLimit; i++) {
-        if ([array[i] isKindOfClass:[NSNull class]]) {
-            [finalPrimesArray addObject:[NSNumber numberWithInt:i]];
-            for (int j = i * i; j < userLimit; j += i)
-                array[j] = [NSNumber numberWithInt:i];
-        }
-    }
-    
-    return [finalPrimesArray copy];
-}
-
-- (NSArray *)generatePrimesWithUserLimit:(NSUInteger)userLimit primesCacheArray:(NSArray *)primesCacheArray {
+- (NSArray *)generatePrimesWithUserLimit:(NSInteger)userLimit primesCacheArray:(NSArray *)primesCacheArray {
     NSMutableArray *finalPrimesArray = [NSMutableArray array];
     for(NSNumber *number in primesCacheArray) {
         if([number integerValue] < userLimit) {
@@ -88,45 +72,57 @@ NSString *const Primes = @"primes";
     return [finalPrimesArray copy];
 }
 
-- (NSArray *)generatePrimesWithUserLimit:(NSUInteger)userLimit cacheLimit:(NSUInteger)cacheLimit primesCacheArray:(NSArray *)primesCacheArray {
-    NSMutableArray *finalPrimesArray = [NSMutableArray array];
+- (NSArray *)generatePrimesWithCache:(NSInteger)cacheLimit primesCacheArray:(NSArray *)primesCacheArray block:(NSInteger)block userLimit:(NSInteger)userLimit {
+    NSMutableArray *newCache = [NSMutableArray array];
+    int n = (int)userLimit / block + 1;
     NSMutableArray *sieveArray = [NSMutableArray array];
-    NSMutableArray *primesSqrtArray = [NSMutableArray array];
-    
-    for(int i = 0; i < userLimit - cacheLimit ; i++) {
+    for(int i = 0; i < userLimit ; i++) {
         sieveArray[i] = [NSNumber numberWithBool:true];
     }
     
-    for(NSNumber *num in primesCacheArray) {
-        if([num integerValue] < sqrt(userLimit) ) {
-            [primesSqrtArray addObject:num ];
-        }
-    }
-    
-    for(int i = 0; i < primesSqrtArray.count; i++) {
-        NSInteger h  = cacheLimit % [primesSqrtArray[i] integerValue];
-        NSInteger j = h == 0 ? 0 : [primesSqrtArray[i] integerValue] - h;
-        for(; j < userLimit - cacheLimit ; j += [primesSqrtArray[i] integerValue]) {
-            sieveArray[j] = [NSNumber numberWithBool:false];
-        }
-    }
-    
-    for(int i = cacheLimit ; i < sqrt(userLimit) ; i++) {
-        if(sieveArray[i - cacheLimit]) {
-            for(int j = i * i; j < userLimit - cacheLimit ; j += i) {
-                sieveArray[j - cacheLimit] = [NSNumber numberWithBool:false];
+    for (int igl = 0; igl < n; igl++) {
+        NSMutableArray *prime = [NSMutableArray array];
+        for(int i = 0; i < primesCacheArray.count; i++) {
+            if([primesCacheArray[i] integerValue] >= igl * block && [primesCacheArray[i] integerValue] < (igl + 1) * block) {
+                [prime addObject:primesCacheArray[i]];
             }
         }
-    }
-    
-    [finalPrimesArray addObjectsFromArray:primesCacheArray];
-    for(int i = 0; i < [sieveArray count]; i++) {
-        if([sieveArray[i] integerValue] == 1) {
-            [finalPrimesArray addObject:[NSNumber numberWithInt:i + (int)cacheLimit]];
+        
+        if((igl + 1) * block > cacheLimit) {
+            for(int i = 0; i < prime.count; i++) {
+                NSInteger h = (igl * block) % [prime[i] integerValue];
+                NSInteger j = h == 0 ? igl * block : i - h + igl * block;
+                for (; j < (igl + 1) * block && j < userLimit; j += [prime[i] integerValue]) {
+                    sieveArray[j] = [NSNumber numberWithBool:false];
+                }
+            }
+            for (int i = (int)MAX( MAX(igl * block, cacheLimit), 2); i < (igl + 1) * block && i < userLimit; i++) {
+                if([sieveArray[i] integerValue] == 1) {
+                    [prime addObject:[NSNumber numberWithInt:i]];
+                    for (int j = i + i; j < (igl + 1) * block && j < userLimit; j += i) {
+                        sieveArray[j] = [NSNumber numberWithBool:false];
+                    }
+                }
+            }
         }
+        
+        int count = (int)ABS(userLimit - MAX(cacheLimit, (igl + 1) * block)) / block + 1;
+        
+        dispatch_apply(count, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(size_t jgl){
+            int start = n - count + (int)jgl;
+            for(int i = 0; i < prime.count; i++) {
+                NSInteger h = (start * block) % [prime[i] integerValue];
+                NSInteger j = h == 0 ? start * block : [prime[i] integerValue] - h + start * block;
+                for (; j < (start + 1) * block && j < userLimit; j += [prime[i] integerValue]) {
+                    sieveArray[j] = [NSNumber numberWithBool:false];
+                }
+            }
+        });
+        
+        [newCache addObjectsFromArray:prime];
     }
     
-    return [finalPrimesArray copy];
+    return newCache;
 }
 
 @end

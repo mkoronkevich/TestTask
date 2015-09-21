@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F11683BA1BAF950C00D26B5D /* HistoryTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = F11683B91BAF950C00D26B5D /* HistoryTableViewCell.m */; };
+		F11683BD1BAF9CB600D26B5D /* UITextView+FontSize.m in Sources */ = {isa = PBXBuildFile; fileRef = F11683BC1BAF9CB600D26B5D /* UITextView+FontSize.m */; };
 		F135D4451BA9EEA2000AF401 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F135D4441BA9EEA2000AF401 /* main.m */; };
 		F135D4481BA9EEA2000AF401 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F135D4471BA9EEA2000AF401 /* AppDelegate.m */; };
 		F135D44B1BA9EEA2000AF401 /* Generator.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = F135D4491BA9EEA2000AF401 /* Generator.xcdatamodeld */; };
@@ -33,6 +35,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F11683B81BAF950C00D26B5D /* HistoryTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryTableViewCell.h; sourceTree = "<group>"; };
+		F11683B91BAF950C00D26B5D /* HistoryTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryTableViewCell.m; sourceTree = "<group>"; };
+		F11683BB1BAF9CB600D26B5D /* UITextView+FontSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITextView+FontSize.h"; sourceTree = "<group>"; };
+		F11683BC1BAF9CB600D26B5D /* UITextView+FontSize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITextView+FontSize.m"; sourceTree = "<group>"; };
 		F135D43F1BA9EEA2000AF401 /* Generator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Generator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F135D4431BA9EEA2000AF401 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F135D4441BA9EEA2000AF401 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -78,6 +84,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F11683B71BAF94D300D26B5D /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F11683B81BAF950C00D26B5D /* HistoryTableViewCell.h */,
+				F11683B91BAF950C00D26B5D /* HistoryTableViewCell.m */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
 		F135D4361BA9EEA2000AF401 = {
 			isa = PBXGroup;
 			children = (
@@ -106,14 +121,15 @@
 				F135D44F1BA9EEA2000AF401 /* Main.storyboard */,
 				F15658541BAC1167000A0449 /* HistoryTableViewController.h */,
 				F15658551BAC1167000A0449 /* HistoryTableViewController.m */,
+				F17D140E1BAA55620038EF83 /* PrimeNumbersGenerator.h */,
+				F17D140F1BAA55620038EF83 /* PrimeNumbersGenerator.m */,
 				F135D4521BA9EEA2000AF401 /* Images.xcassets */,
 				F135D4541BA9EEA2000AF401 /* LaunchScreen.xib */,
 				F135D4491BA9EEA2000AF401 /* Generator.xcdatamodeld */,
+				F11683B71BAF94D300D26B5D /* Cells */,
 				F156581B1BABFF7D000A0449 /* Models */,
 				F135D4721BAA3158000AF401 /* Categories */,
 				F135D4421BA9EEA2000AF401 /* Supporting Files */,
-				F17D140E1BAA55620038EF83 /* PrimeNumbersGenerator.h */,
-				F17D140F1BAA55620038EF83 /* PrimeNumbersGenerator.m */,
 			);
 			path = Generator;
 			sourceTree = "<group>";
@@ -152,6 +168,8 @@
 				F135D4701BAA2796000AF401 /* UILabel+FontSize.m */,
 				F135D4731BAA3218000AF401 /* UITextField+FontSize.h */,
 				F135D4741BAA3218000AF401 /* UITextField+FontSize.m */,
+				F11683BB1BAF9CB600D26B5D /* UITextView+FontSize.h */,
+				F11683BC1BAF9CB600D26B5D /* UITextView+FontSize.m */,
 			);
 			name = Categories;
 			sourceTree = "<group>";
@@ -265,6 +283,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F11683BD1BAF9CB600D26B5D /* UITextView+FontSize.m in Sources */,
+				F11683BA1BAF950C00D26B5D /* HistoryTableViewCell.m in Sources */,
 				F15658561BAC1167000A0449 /* HistoryTableViewController.m in Sources */,
 				F135D44B1BA9EEA2000AF401 /* Generator.xcdatamodeld in Sources */,
 				F17D14101BAA55620038EF83 /* PrimeNumbersGenerator.m in Sources */,
